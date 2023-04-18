@@ -1,12 +1,8 @@
-import spotipy, pandas as pd, json, numpy as np
+import spotipy, pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
 from sklearn import preprocessing as pre
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_samples, silhouette_score
-from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
-import matplotlib.pyplot as plt
-import seaborn as sns
-from itertools import combinations, permutations
+from yellowbrick.cluster import KElbowVisualizer
 import sys
 
 if not sys.warnoptions:
@@ -20,6 +16,11 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(redirect_uri=red_url,scope=scope)
 user = sp.me()['id']
 
 def feature_extraction(playlist):
+    """
+    A function to extract relevant song features from the inputted playlist.
+    """
+
+    # Extracts the song track id for each song in the playlist
     offset = 0
     song_ids = []
     while True:
@@ -29,6 +30,7 @@ def feature_extraction(playlist):
         song_ids += [d['track']['id'] for d in songs]
         offset += len(songs)
 
+    # Extracts audio features for each song in the playlist using the above-gotten song ids
     offset = 0
     limit = 50
     song_feats = []
@@ -37,10 +39,13 @@ def feature_extraction(playlist):
         offset += limit
     
     df_feats = pd.DataFrame(song_feats)[['id','danceability', 'mode', 'instrumentalness']]
-
     return df_feats
 
 def feature_norming(dataframe_features):
+    """
+    A function to norm the extracted audio features
+    """
+
     to_norm = dataframe_features[['danceability', 'instrumentalness']].values
     scaler = pre.MinMaxScaler()
     normed = scaler.fit_transform(to_norm)
@@ -48,8 +53,13 @@ def feature_norming(dataframe_features):
     return df_feats
 
 def playlist_creation(dataframe_features):
+    """
+    Clusters the songs in the playlist and creates new playlists from those clusters
+    """
+
+    # Finds the optimal number of clusters using silhouette scores and the elbow method
     df_clustering = dataframe_features.set_index('id')
-    n_clusters = [2, 3, 4, 5, 6]
+    n_clusters = [2, 3, 4, 5, 6, 7]
     model = KElbowVisualizer(KMeans(), k=(min(n_clusters), max(n_clusters)), metric='silhouette', timings=False)
     model.fit(df_clustering.values)
     num_clusts = model.elbow_value_
@@ -57,6 +67,7 @@ def playlist_creation(dataframe_features):
     clusters = {'cluster': mod.labels_}
     df_clustered = dataframe_features.join(pd.DataFrame(clusters))
 
+    # Creates a playlist for each cluster (if no playlist with the same name exists)
     for i in range(num_clusts):
         songs = list(df_clustered['id'][df_clustered['cluster'] == i])
         name = f'created_playlist_{i+1}'
