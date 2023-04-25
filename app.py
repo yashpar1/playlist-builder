@@ -38,7 +38,7 @@ def feature_extraction(playlist):
         song_feats += sp.audio_features(tracks=song_ids[offset: offset + limit])
         offset += limit
     
-    df_feats = pd.DataFrame(song_feats)[['id','danceability', 'mode', 'instrumentalness']]
+    df_feats = pd.DataFrame(song_feats)[['id','loudness', 'mode', 'instrumentalness']]
     return df_feats
 
 def feature_norming(dataframe_features):
@@ -46,10 +46,10 @@ def feature_norming(dataframe_features):
     A function to norm the extracted audio features
     """
 
-    to_norm = dataframe_features[['danceability', 'instrumentalness']].values
+    to_norm = dataframe_features[['loudness', 'instrumentalness']].values
     scaler = pre.MinMaxScaler()
     normed = scaler.fit_transform(to_norm)
-    df_feats = dataframe_features.drop(['danceability', 'instrumentalness'], axis=1).join(pd.DataFrame(normed, columns=['danceability', 'instrumentalness']))
+    df_feats = dataframe_features.drop(['loudness', 'instrumentalness'], axis=1).join(pd.DataFrame(normed, columns=['danceability', 'instrumentalness']))
     return df_feats
 
 def playlist_creation(dataframe_features):
