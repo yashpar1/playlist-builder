@@ -25,3 +25,21 @@ This file contains a walkthrough of how the clustering algorithm was created, in
 
 ##### [app.py](app.py)
 The file to run in order to create playlists.
+
+##### [requirements.txt](requirements.txt)
+Contains required packages.
+
+##### [.gitignore](.gitignore)
+Prevents uploading old cached code and personal authentication info.
+
+### Instructions
+
+0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
+
+1. In command line, run the command:
+$ pip install -r requirements.txt $
+As a note, this also installs packages for app.py, like spotipy, and some only needed for the walkthrough notebook, like seaborn.
+
+2. In command line, run the command:
+$ python app.py $
+When prompted, paste in the link to the playlist you want to split.
