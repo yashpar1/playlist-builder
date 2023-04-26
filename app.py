@@ -38,7 +38,7 @@ def feature_extraction(playlist):
         song_feats += sp.audio_features(tracks=song_ids[offset: offset + limit])
         offset += limit
     
-    df_feats = pd.DataFrame(song_feats)[['id' 'mode', 'instrumentalness']]
+    df_feats = pd.DataFrame(song_feats)[['id', 'mode', 'instrumentalness']]
     return df_feats
 
 def feature_norming(dataframe_features):
