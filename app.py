@@ -66,7 +66,7 @@ def playlist_creation(dataframe_features):
     mod = KMeans(n_clusters=num_clusts).fit(df_clustering.values)
     clusters = {'cluster': mod.labels_}
     df_clustered = dataframe_features.join(pd.DataFrame(clusters))
-    play_name = playlist(playlist_id=playlist, fields='name')['name']
+    play_name = sp.playlist(playlist_id=playlist, fields='name')['name']
 
     # Creates a playlist for each cluster (if no playlist with the same name exists)
     for i in range(num_clusts):
