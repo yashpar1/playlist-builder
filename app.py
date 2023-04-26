@@ -38,7 +38,7 @@ def feature_extraction(playlist):
         song_feats += sp.audio_features(tracks=song_ids[offset: offset + limit])
         offset += limit
     
-    df_feats = pd.DataFrame(song_feats)[['id','loudness', 'mode', 'instrumentalness']]
+    df_feats = pd.DataFrame(song_feats)[['id' 'mode', 'instrumentalness']]
     return df_feats
 
 def feature_norming(dataframe_features):
@@ -46,10 +46,10 @@ def feature_norming(dataframe_features):
     A function to norm the extracted audio features
     """
 
-    to_norm = dataframe_features[['loudness', 'instrumentalness']].values
+    to_norm = dataframe_features[['instrumentalness']].values
     scaler = pre.MinMaxScaler()
     normed = scaler.fit_transform(to_norm)
-    df_feats = dataframe_features.drop(['loudness', 'instrumentalness'], axis=1).join(pd.DataFrame(normed, columns=['danceability', 'instrumentalness']))
+    df_feats = dataframe_features.drop(['instrumentalness'], axis=1).join(pd.DataFrame(normed, columns=['instrumentalness']))
     return df_feats
 
 def playlist_creation(dataframe_features):
@@ -59,7 +59,7 @@ def playlist_creation(dataframe_features):
 
     # Finds the optimal number of clusters using silhouette scores and the elbow method
     df_clustering = dataframe_features.set_index('id')
-    n_clusters = [2, 3, 4, 5, 6, 7]
+    n_clusters = [2, 3, 4, 5, 6]
     model = KElbowVisualizer(KMeans(), k=(min(n_clusters), max(n_clusters)), metric='silhouette', timings=False)
     model.fit(df_clustering.values)
     num_clusts = model.elbow_value_
