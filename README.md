@@ -2,7 +2,7 @@
 
 ## Project Intro
 
-<font size='2'>This project takes a Spotify playlist and splits it into smaller ones using some of the Audio Features for each track made publicly available by Spotify. It ignores labels like genre, instead grouping on features such as "tempo" or "instrumentalness" (more on that in [this notebook](exploratory_analysis_and_walkthrough.ipynb)). The motivation for the project was simple: I didn't want to manually decide which playlist to put 500 different songs on.</font>
+<font size='2'>This project takes a Spotify playlist and splits it into smaller ones using some of the Audio Features for each track made publicly available by Spotify. It ignores labels like genre, instead grouping on features such as "tempo" or "energy" (more on that in [this notebook](exploratory_analysis_and_walkthrough.ipynb)). The motivation for the project was simple: I didn't want to manually decide which playlist to put 500 different songs on.</font>
 
 ## Methods
 
