@@ -2,7 +2,7 @@ import spotipy, pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
 from sklearn import preprocessing as pre
 from sklearn.cluster import KMeans
-from yellowbrick.cluster import KElbowVisualizer
+from sklearn.metrics import silhouette_score
 import sys
 from itertools import combinations
 
@@ -65,18 +65,21 @@ def playlist_creation(dataframe_features):
     combos = list(combinations(cols, 2))
     for combo in combos:
         subset = df_clustering[list(combo)]
-        model = KElbowVisualizer(KMeans(), k=(min(n_clusters), max(n_clusters)), metric='silhouette', timings=False)
-        model.fit(subset.values)
-        score.append(model.elbow_score_)
-        value.append(model.elbow_value_)
+        scores = []
+        for n in n_clusters:
+            model = KMeans(n_clusters=n)
+            clusters = model.fit_predict(subset)
+            scores.append(silhouette_score(subset, clusters))
+        score.append(max(scores))
+        value.append(scores.index(max(scores)) + min(n_clusters))
 
-    performance = {'score': score, 'elbow': value}
+    performance = {'max_score': score, 'clusters': value}
     df_combos = pd.DataFrame(combos, columns=['feat_1', 'feat_2']).join(pd.DataFrame(performance))
-    df_combos['total'] = df_combos.apply(lambda combo: combo['score'] * combo['elbow'], axis=1)
+    df_combos['total'] = df_combos.apply(lambda combo: combo['max_score'] * combo['clusters'], axis=1)
 
     feat_1 = df_combos[df_combos['total']==df_combos['total'].max()]['feat_1'].values[0]
     feat_2 = df_combos[df_combos['total']==df_combos['total'].max()]['feat_2'].values[0]
-    num_clusts = df_combos[df_combos['total']==df_combos['total'].max()]['elbow'].values[0]
+    num_clusts = df_combos[df_combos['total']==df_combos['total'].max()]['clusters'].values[0]
     print(f'Creating {num_clusts} playlists with clusters based on {feat_1} and {feat_2}')
 
     df_to_cluster = dataframe_features[['id', feat_1, feat_2]]

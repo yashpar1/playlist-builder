@@ -1,5 +1,4 @@
 spotipy
-yellowbrick
 pandas
 scikit-learn
 seaborn

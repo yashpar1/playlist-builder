@@ -12,7 +12,6 @@ Spotipy  </font>
 ## Requirements
 <font size='2'>[Python](https://www.python.org/downloads/ "Python")  
 [Spotipy](https://spotipy.readthedocs.io/en/2.22.1/ "Spotipy")  
-[Yellowbrick](https://www.scikit-yb.org/en/latest/ "Yellowbrick")  
 [Pandas](https://pandas.pydata.org/ "Pandas")  
 [Scikit-Learn](https://scikit-learn.org/stable/ "scikit-learn")  
 [seaborn](https://seaborn.pydata.org/ "seaborn")  </font>
