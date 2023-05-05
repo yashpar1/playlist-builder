@@ -2,13 +2,15 @@
 
 ## Project Intro
 
-<font size='2'>This project takes a Spotify playlist and splits it into smaller ones using some of the Audio Features for each track made publicly available by Spotify. It ignores labels like genre, instead grouping on features such as "tempo" or "energy" (more on that in [this notebook](exploratory_analysis_and_walkthrough.ipynb)). The motivation for the project was simple: I didn't want to manually decide which playlist to put 500 different songs on.</font>
+<font size='2'>This project takes a Spotify playlist and splits it into smaller ones using some of the Audio Features for each track made publicly available by Spotify. It ignores labels like genre, instead grouping on features such as "tempo" or "energy" (more on that in [this notebook](exploratory_analysis_and_walkthrough.ipynb)). The motivation for the project was simple: I didn't want to manually decide which playlist to put 500 different songs on.  
+  
+The app is currently in developer mode, so it's capped at 25 users and I need to manually enter their emails. You could clone the repo and [set up your own Spotify app](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) for now, or [email me](yashwant.parmar@gmail.com) for authorization.</font>
 
 ## Instructions to Run
 
 <font size='2'>
 
-0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
+0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) hyperlinked.
 
 1. In command line, run:  
 ```$ pip install -r requirements.txt```  
@@ -16,7 +18,7 @@ The file does not specify versions, and therefore defaults to the latest. You ma
 
 2. In command line, run:  
 ```$ python app.py```  
-When prompted, paste the link to the playlist you want to split. You'll also have to log in to Spotify (a browser should pop-up automatically).
+When prompted, paste the link to the playlist you want to split. You'll also have to log in to Spotify (a browser should pop up automatically).
 
 </font>
 
