@@ -12,7 +12,7 @@
 
 1. In command line, run:  
 ```$ pip install -r requirements.txt```  
-The file does not specify versions, and therefore defaults to the latest. You may need to update pip and python if installation fails.
+The file does not specify versions, and therefore defaults to the latest. You may need to update [pip](https://pip.pypa.io/en/stable/installation/#upgrading-pip) and [python](https://www.pythoncentral.io/how-to-update-python/) if installation fails. Update instructions hyperlinked.
 
 2. In command line, run:  
 ```$ python app.py```  
