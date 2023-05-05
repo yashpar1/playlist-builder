@@ -15,7 +15,7 @@
 
 2. In command line, run:  
 ```$ python app.py```  
-When prompted, paste the link to the playlist you want to split.
+When prompted, paste the link to the playlist you want to split. You'll also have to log in to Spotify (a browser should pop-up automatically).
 
 </font>
 
