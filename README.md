@@ -4,6 +4,21 @@
 
 <font size='2'>This project takes a Spotify playlist and splits it into smaller ones using some of the Audio Features for each track made publicly available by Spotify. It ignores labels like genre, instead grouping on features such as "tempo" or "energy" (more on that in [this notebook](exploratory_analysis_and_walkthrough.ipynb)). The motivation for the project was simple: I didn't want to manually decide which playlist to put 500 different songs on.</font>
 
+## Instructions to Run
+
+<font size='2'>
+
+0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
+
+1. In command line, run:  
+```$ pip install -r requirements.txt```
+
+2. In command line, run:  
+```$ python app.py```  
+When prompted, paste the link to the playlist you want to split.
+
+</font>
+
 ## Methods
 
 <font size='2'>K-Means Clustering  
@@ -29,21 +44,6 @@ Spotipy  </font>
 
 #### [.gitignore](.gitignore)
 <font size='2'>Prevents uploading old cached code and personal authentication info.</font>
-
-## Instructions
-
-<font size='2'>
-
-0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
-
-1. In command line, run:
-```$ pip install -r requirements.txt```
-
-2. In command line, run:
-```$ python app.py```
-When prompted, paste in the link to the playlist you want to split.
-
-</font>
 
 ## Limitations and Future Improvements
 
