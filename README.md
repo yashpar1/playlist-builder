@@ -11,7 +11,8 @@
 0. (recommended but not required) Create an environment. Instructions for when using [pip](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) and [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
 
 1. In command line, run:  
-```$ pip install -r requirements.txt```
+```$ pip install -r requirements.txt```  
+The file does not specify versions, and therefore defaults to the latest. You may need to update pip and python if installation fails.
 
 2. In command line, run:  
 ```$ python app.py```  
