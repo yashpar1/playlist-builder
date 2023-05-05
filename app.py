@@ -1,5 +1,5 @@
 import spotipy, pandas as pd
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyPKCE
 from sklearn import preprocessing as pre
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -12,8 +12,9 @@ if not sys.warnoptions:
 
 scope = 'playlist-modify-public playlist-modify-private'
 red_url = 'http://localhost:8080'
+client_id = '3d05de7a35df4db0a064b4e40d9c6638'
 playlist = input('Paste the url to your Spotify playlist here: \n')
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(redirect_uri=red_url,scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyPKCE(client_id=client_id, redirect_uri=red_url, scope=scope))
 user = sp.me()['id']
 
 def feature_extraction(playlist):
