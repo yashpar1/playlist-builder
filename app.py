@@ -91,7 +91,7 @@ def playlist_creation(dataframe_features):
     # Creates a playlist for each cluster (if no playlist with the same name exists)
     for i in range(num_clusts):
         songs = list(df_clustered['id'][df_clustered['cluster'] == i])
-        name = f'{play_name}_created_playlist_{i+1}'
+        name = f'{play_name}_split_{i+1}'
         current_playlists = []
         offset = 0
         while True:
