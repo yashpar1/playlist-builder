@@ -6,6 +6,10 @@
   
 The app is currently in developer mode, so access requires being manually added to a list of Authenticated Users. You could clone the repo and [set up your own Spotify app](https://developer.spotify.com/documentation/web-api/tutorials/getting-started) for now, or [email me](yashwant.parmar@gmail.com) to be added to the list.</font>
 
+## Organization
+
+<font size='2'>The project was initially made as a Jupyter Notebook and python script, and the code needed for those is found in the folder [python](python). The description below talks about the files in that folder; a walkthrough of the rework in JavaScript will be added (and this ReadMe reorganized) once that section of the project is closer to complete.
+
 ## Instructions to Run
 
 <font size='2'>
@@ -36,13 +40,13 @@ Spotipy  </font>
 
 ## Files
 
-#### [exploratory_analysis_and_walkthrough.ipynb](exploratory_analysis_and_walkthrough.ipynb)
+#### [exploratory_analysis_and_walkthrough.ipynb](python/exploratory_analysis_and_walkthrough.ipynb)
 <font size='2'>A walkthrough of how the clustering algorithm was created, including spotipy authorization, feature extraction, data cleaning, choosing features to cluster on, and playlist creation.</font>
 
-#### [app.py](app.py)
+#### [app.py](python/app.py)
 <font size='2'>The file that takes a url to a Spotify playlist and splits it into smaller clustered playlists.</font>
 
-#### [requirements.txt](requirements.txt)
+#### [requirements.txt](python/requirements.txt)
 <font size='2'>Contains packages required for both the notebook and app.py</font>
 
 #### [.gitignore](.gitignore)
