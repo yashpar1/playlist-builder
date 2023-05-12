@@ -1,10 +1,7 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
 const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
+const code = params.get('code');
 
 if (!code) {
     redirectToAuthCodeFlow(clientId);
