@@ -11,11 +11,12 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 scope = 'playlist-modify-public playlist-modify-private'
-red_url = 'http://localhost:8080'
+red_uri = 'http://localhost:8080'
 client_id = '3d05de7a35df4db0a064b4e40d9c6638'
 playlist = input('Paste the url to your Spotify playlist here: \n')
-sp = spotipy.Spotify(auth_manager=SpotifyPKCE(client_id=client_id, redirect_uri=red_url, scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyPKCE(client_id=client_id, redirect_uri=red_uri, scope=scope))
 user = sp.me()['id']
+features = ['energy', 'tempo', 'danceability', 'valence']
 
 def feature_extraction(playlist):
     """
@@ -32,13 +33,13 @@ def feature_extraction(playlist):
         offset += len(songs)
 
     offset = 0
-    limit = 50
+    limit = 100
     song_feats = []
     while offset < len(song_ids):
         song_feats += sp.audio_features(tracks=song_ids[offset: offset + limit])
         offset += limit
     
-    df_feats = pd.DataFrame(song_feats)[['id', 'energy', 'tempo', 'danceability', 'valence']]
+    df_feats = pd.DataFrame(song_feats)[['id'] + features]
     return df_feats
 
 def feature_norming(dataframe_features):
@@ -46,10 +47,10 @@ def feature_norming(dataframe_features):
     A function to norm the extracted audio features
     """
 
-    to_norm = dataframe_features[['energy', 'tempo', 'danceability', 'valence']].values
+    to_norm = dataframe_features[features].values
     scaler = pre.MinMaxScaler()
     normed = scaler.fit_transform(to_norm)
-    df_feats = dataframe_features.drop(['energy', 'tempo', 'danceability', 'valence'], axis=1).join(pd.DataFrame(normed, columns=['energy', 'tempo', 'danceability', 'valence']))
+    df_feats = dataframe_features.drop(features, axis=1).join(pd.DataFrame(normed, columns=features))
     return df_feats
 
 def playlist_creation(dataframe_features):
@@ -77,10 +78,11 @@ def playlist_creation(dataframe_features):
     performance = {'max_score': score, 'clusters': value}
     df_combos = pd.DataFrame(combos, columns=['feat_1', 'feat_2']).join(pd.DataFrame(performance))
     df_combos['total'] = df_combos.apply(lambda combo: combo['max_score'] * combo['clusters'], axis=1)
+    best = df_combos[df_combos['total']==df_combos['total'].max()]
 
-    feat_1 = df_combos[df_combos['total']==df_combos['total'].max()]['feat_1'].values[0]
-    feat_2 = df_combos[df_combos['total']==df_combos['total'].max()]['feat_2'].values[0]
-    num_clusts = df_combos[df_combos['total']==df_combos['total'].max()]['clusters'].values[0]
+    feat_1 = best['feat_1'].values[0]
+    feat_2 = best['feat_2'].values[0]
+    num_clusts = best['clusters'].values[0]
     print(f'Creating {num_clusts} playlists with clusters based on {feat_1} and {feat_2}')
 
     df_to_cluster = dataframe_features[['id', feat_1, feat_2]]
