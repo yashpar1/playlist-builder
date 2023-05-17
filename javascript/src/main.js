@@ -7,6 +7,10 @@ if (!code) {
     redirectToAuthCodeFlow(clientId);
 } else {
     const accessToken = await getAccessToken(clientId, code);
+    if (typeof module === 'object') {
+      module.exports = {accessToken};
+    };
+    // module.exports = {accessToken};
     const profile = await fetchProfile(accessToken);
     populateUI(profile);
 }
@@ -21,7 +25,7 @@ export async function redirectToAuthCodeFlow(clientId) {
   params.append("client_id", clientId);
   params.append("response_type", "code");
   params.append("redirect_uri", "http://localhost:5173");
-  params.append("scope", "user-read-private user-read-email");
+  params.append("scope", "user-read-private user-read-email playlist-read-private");
   params.append("code_challenge_method", "S256");
   params.append("code_challenge", challenge);
 
@@ -90,4 +94,5 @@ function populateUI(profile) {
   document.getElementById("uri").setAttribute("href", profile.external_urls.spotify);
   document.getElementById("url").innerText = profile.href;
   document.getElementById("url").setAttribute("href", profile.href);
+  document.getElementById("url").innerText = profile.href;
 }
