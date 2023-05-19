@@ -3,16 +3,15 @@ const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
 const code = params.get('code');
 
+export const accessToken = await getAccessToken(clientId, code);
+
 if (!code) {
     redirectToAuthCodeFlow(clientId);
 } else {
-    const accessToken = await getAccessToken(clientId, code);
-    if (typeof module === 'object') {
-      module.exports = {accessToken};
-    };
-    // module.exports = {accessToken};
+    // const accessToken = await getAccessToken(clientId, code);
     const profile = await fetchProfile(accessToken);
-    populateUI(profile);
+    const playlists = await (fetchPlaylists(accessToken));
+    populateUI(profile, playlists);
 }
 
 export async function redirectToAuthCodeFlow(clientId) {
@@ -80,7 +79,26 @@ async function fetchProfile(token) {
   return await result.json();
 }
 
-function populateUI(profile) {
+async function fetchPlaylists(token) {
+  const result = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+  });
+
+  return await result.json();
+}
+
+
+function returnPlaylists(playlists) {
+  return playlists.items?.map(getNames);
+}
+
+
+function getNames(playlist) {
+  return playlist.name;
+}
+
+
+function populateUI(profile, playlists) {
   document.getElementById("displayName").innerText = profile.display_name;
   if (profile.images[0]) {
       const profileImage = new Image(200, 200);
@@ -88,6 +106,27 @@ function populateUI(profile) {
       document.getElementById("avatar").appendChild(profileImage);
       document.getElementById("imgUrl").innerText = profile.images[0].url;
   }
+
+  let items = returnPlaylists(playlists);
+
+  let ul = document.createElement('ul');
+
+  // Make the list item
+  let li = document.createElement('li');
+
+  document.getElementById('profile').appendChild(ul);
+
+  items?.forEach((playlist) => {
+    // Add the item text
+    li.innerHTML += playlist;
+
+    // Add li to the ul
+    ul.appendChild(li);
+
+    // Reset the list item
+    li = document.createElement('li');
+  });
+
   document.getElementById("id").innerText = profile.id;
   document.getElementById("email").innerText = profile.email;
   document.getElementById("uri").innerText = profile.uri;
