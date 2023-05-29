@@ -8,9 +8,8 @@ export const accessToken = await getAccessToken(clientId, code);
 if (!code) {
     redirectToAuthCodeFlow(clientId);
 } else {
-    // const accessToken = await getAccessToken(clientId, code);
     const profile = await fetchProfile(accessToken);
-    const playlists = await (fetchPlaylists(accessToken));
+    const playlists = await fetchPlaylists(accessToken);
     populateUI(profile, playlists);
 }
 
@@ -87,14 +86,35 @@ async function fetchPlaylists(token) {
   return await result.json();
 }
 
-
 function returnPlaylists(playlists) {
-  return playlists.items?.map(getNames);
+  const plays = playlists.items?.map(getNames);
+  const ids = playlists.items?.map(getIds);
+  return plays;
+  // to do: get playlist ids, return both as object, rework html loop to call names from objects
 }
-
 
 function getNames(playlist) {
   return playlist.name;
+}
+
+function getIds(playlist) {
+  return playlist.id;
+}
+
+async function getSongs(playlist) {
+  const songs = await fetch(`https://api.spotify.com/v1/playlists/${playlist}/tracks?fields=next%2Citems%28track%28id%2Cname%2Cartists%28name%29%29%29&limit=50`, {
+    method: "GET", headers: { Authorization: `Bearer ${token}` }
+  });
+
+  return songs;
+}
+
+async function getFeats(songs) {
+  const feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${songs}`, {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+  });
+
+  return feats;
 }
 
 
