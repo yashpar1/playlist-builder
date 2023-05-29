@@ -87,46 +87,46 @@ async function fetchPlaylists(token) {
 }
 
 function returnPlaylists(playlists) {
-  const plays = playlists.items?.map(getNames);
-  const ids = playlists.items?.map(getIds);
-  return plays;
-  // to do: get playlist ids, return both as object, rework html loop to call names from objects
+  const names = playlists.items?.map( (items) => items.name);
+  const ids = playlists.items?.map( (items) => items.id);
+  return { names, ids };
 }
 
-function getNames(playlist) {
-  return playlist.name;
-}
-
-function getIds(playlist) {
-  return playlist.id;
-}
-
-async function getSongs(playlist) {
-  const songs = await fetch(`https://api.spotify.com/v1/playlists/${playlist}/tracks?fields=next%2Citems%28track%28id%2Cname%2Cartists%28name%29%29%29&limit=50`, {
-    method: "GET", headers: { Authorization: `Bearer ${token}` }
+async function getSongs(playlist_id) {
+  const songs = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cartists%28name%29%29%29&limit=50`, {
+    method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
   });
 
-  return await songs;
+  return await songs.json();
 }
 
 async function getFeats(songs) {
   const feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${songs}`, {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
+      method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
   });
 
-  return await feats;
+  return await feats.json();
 }
 
 function showPlaylists(playlists) {
-  let items = returnPlaylists(playlists);
+  let plays = returnPlaylists(playlists);
+  let names = plays.names;
+  let ids = plays.ids;
 
   let ul = document.createElement('ul');
   let li = document.createElement('li');
 
   document.getElementById('profile').appendChild(ul);
 
-  items?.forEach((playlist) => {
+  names?.forEach((playlist) => {
     li.innerHTML += playlist;
+    ul.appendChild(li);
+    li = document.createElement('li');
+  });
+
+  ids?.forEach(async (id) => {
+    const songs = await getSongs(id);
+    li.innerHTML += songs.items.map( (items) => items.track.name );
     ul.appendChild(li);
     li = document.createElement('li');
   });
