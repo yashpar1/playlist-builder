@@ -79,11 +79,11 @@ async function fetchProfile(token) {
 }
 
 async function fetchPlaylists(token) {
-  const result = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
+  const playlists = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
-  return await result.json();
+  return await playlists.json();
 }
 
 function returnPlaylists(playlists) {
@@ -106,7 +106,7 @@ async function getSongs(playlist) {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
-  return songs;
+  return await songs;
 }
 
 async function getFeats(songs) {
@@ -114,7 +114,22 @@ async function getFeats(songs) {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
-  return feats;
+  return await feats;
+}
+
+function showPlaylists(playlists) {
+  let items = returnPlaylists(playlists);
+
+  let ul = document.createElement('ul');
+  let li = document.createElement('li');
+
+  document.getElementById('profile').appendChild(ul);
+
+  items?.forEach((playlist) => {
+    li.innerHTML += playlist;
+    ul.appendChild(li);
+    li = document.createElement('li');
+  });
 }
 
 
@@ -127,25 +142,7 @@ function populateUI(profile, playlists) {
       document.getElementById("imgUrl").innerText = profile.images[0].url;
   }
 
-  let items = returnPlaylists(playlists);
-
-  let ul = document.createElement('ul');
-
-  // Make the list item
-  let li = document.createElement('li');
-
-  document.getElementById('profile').appendChild(ul);
-
-  items?.forEach((playlist) => {
-    // Add the item text
-    li.innerHTML += playlist;
-
-    // Add li to the ul
-    ul.appendChild(li);
-
-    // Reset the list item
-    li = document.createElement('li');
-  });
+  showPlaylists(playlists);
 
   document.getElementById("id").innerText = profile.id;
   document.getElementById("email").innerText = profile.email;
