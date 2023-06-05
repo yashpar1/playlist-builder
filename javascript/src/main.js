@@ -115,9 +115,18 @@ async function getSongs(playlist_id) {
 }
 
 async function getFeats(songs) {
-  const feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${songs}`, {
+  let i_max = Math.ceil(songs.length/100);
+  let i_init = 0;
+  const feats = {};
+
+  while (i_init < i_max) {
+    let curr_songs = songs.slice(100 * i_init, 100 * (i_init + 1));
+    const new_feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${curr_songs}`, {
       method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
-  });
+    });
+    feats.push(new_feats);
+    i_init++;
+  };
 
   return await feats.json();
 }
