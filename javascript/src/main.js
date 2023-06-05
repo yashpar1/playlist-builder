@@ -83,6 +83,13 @@ async function fetchPlaylists(token) {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
+  while (playlists.next != null) {
+    const new_playlists = await fetch(playlists.next, {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+    });
+    playlists.push(new_playlists);
+  }
+
   return await playlists.json();
 }
 
@@ -93,11 +100,18 @@ function returnPlaylists(playlists) {
 }
 
 async function getSongs(playlist_id) {
-  const songs = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cartists%28name%29%29%29&limit=50`, {
+  const playlist_info = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cartists%28name%29%29%29&limit=50`, {
     method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
   });
 
-  return await songs.json();
+  while (playlist_info.next != null) {
+    const new_playlist_info = await fetch(playlist_info.next, {
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
+    });
+    playlist_info.push(new_playlist_info);
+  }
+
+  return await playlist_info.json();
 }
 
 async function getFeats(songs) {
