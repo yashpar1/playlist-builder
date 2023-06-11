@@ -1,5 +1,6 @@
 import './../style.css';
 import { getSongs } from './songInfo';
+import { showPlaylists } from './userInterface.js';
 const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
 const code = params.get('code');
@@ -94,36 +95,11 @@ async function fetchPlaylists(token) {
   return await playlists.json();
 }
 
-function returnPlaylists(playlists) {
+export function returnPlaylists(playlists) {
   const names = playlists.items?.map( (items) => items.name);
   const ids = playlists.items?.map( (items) => items.id);
   return { names, ids };
 }
-
-function showPlaylists(playlists) {
-  const plays = returnPlaylists(playlists);
-  let names = plays.names;
-  let ids = plays.ids;
-
-  let ul = document.createElement('ul');
-  let li = document.createElement('li');
-
-  document.getElementById('profile').appendChild(ul);
-
-  names?.forEach((playlist) => {
-    li.innerHTML += playlist;
-    ul.appendChild(li);
-    li = document.createElement('li');
-  });
-
-  ids?.forEach(async (id) => {
-    const songs = await getSongs(id);
-    li.innerHTML += songs.items.map( (items) => items.track.name );
-    ul.appendChild(li);
-    li = document.createElement('li');
-  });
-}
-
 
 function populateUI(profile, playlists) {
   document.getElementById("displayName").innerText = profile.display_name;
