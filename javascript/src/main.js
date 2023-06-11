@@ -1,4 +1,5 @@
-import './../style.css'
+import './../style.css';
+import { getSongs } from './songInfo';
 const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
 const code = params.get('code');
@@ -84,7 +85,7 @@ async function fetchPlaylists(token) {
   });
 
   while (playlists.next != null) {
-    const new_playlists = await fetch(playlists.next, {
+    let new_playlists = await fetch(playlists.next, {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
     playlists.push(new_playlists);
@@ -99,40 +100,8 @@ function returnPlaylists(playlists) {
   return { names, ids };
 }
 
-async function getSongs(playlist_id) {
-  const playlist_info = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cartists%28name%29%29%29&limit=50`, {
-    method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
-  });
-
-  while (playlist_info.next != null) {
-    const new_playlist_info = await fetch(playlist_info.next, {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
-    });
-    playlist_info.push(new_playlist_info);
-  }
-
-  return await playlist_info.json();
-}
-
-async function getFeats(songs) {
-  let i_max = Math.ceil(songs.length/100);
-  let i_init = 0;
-  const feats = {};
-
-  while (i_init < i_max) {
-    let curr_songs = songs.slice(100 * i_init, 100 * (i_init + 1));
-    const new_feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${curr_songs}`, {
-      method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    feats.push(new_feats);
-    i_init++;
-  };
-
-  return await feats.json();
-}
-
 function showPlaylists(playlists) {
-  let plays = returnPlaylists(playlists);
+  const plays = returnPlaylists(playlists);
   let names = plays.names;
   let ids = plays.ids;
 
