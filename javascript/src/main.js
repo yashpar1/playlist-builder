@@ -1,6 +1,5 @@
 import './../style.css';
-import { getSongs } from './songInfo';
-import { showPlaylists } from './userInterface.js';
+import { populateUI } from './userInterface.js';
 const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
 const code = params.get('code');
@@ -99,24 +98,4 @@ export function returnPlaylists(playlists) {
   const names = playlists.items?.map( (items) => items.name);
   const ids = playlists.items?.map( (items) => items.id);
   return { names, ids };
-}
-
-function populateUI(profile, playlists) {
-  document.getElementById("displayName").innerText = profile.display_name;
-  if (profile.images[0]) {
-      const profileImage = new Image(200, 200);
-      profileImage.src = profile.images[0].url;
-      document.getElementById("avatar").appendChild(profileImage);
-      document.getElementById("imgUrl").innerText = profile.images[0].url;
-  }
-
-  showPlaylists(playlists);
-
-  document.getElementById("id").innerText = profile.id;
-  document.getElementById("email").innerText = profile.email;
-  document.getElementById("uri").innerText = profile.uri;
-  document.getElementById("uri").setAttribute("href", profile.external_urls.spotify);
-  document.getElementById("url").innerText = profile.href;
-  document.getElementById("url").setAttribute("href", profile.href);
-  document.getElementById("url").innerText = profile.href;
 }
