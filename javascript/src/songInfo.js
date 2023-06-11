@@ -1,7 +1,7 @@
 import { accessToken } from "./main";
 
 export async function getSongs(playlist_id) {
-    const playlist_info = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cartists%28name%29%29%29&limit=50`, {
+    const playlist_info = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29&limit=50`, {
       method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
   
@@ -16,12 +16,13 @@ export async function getSongs(playlist_id) {
 }
   
 export async function getFeats(songs) {
-    let i_max = Math.ceil(songs.length/100);
+    let ids = songs.items.map( (items) => items.track.id );
+    let i_max = Math.ceil(ids.length/100);
     let i_init = 0;
     const feats = {};
   
     while (i_init < i_max) {
-      let curr_songs = songs.slice(100 * i_init, 100 * (i_init + 1));
+      let curr_songs = ids.slice(100 * i_init, 100 * (i_init + 1));
       let new_feats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${curr_songs}`, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
       });
@@ -29,5 +30,5 @@ export async function getFeats(songs) {
       i_init++;
     };
   
-    return await feats.json();
+    return await { ids, feats };
 }
