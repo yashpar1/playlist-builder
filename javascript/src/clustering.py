@@ -1,20 +1,13 @@
-import spotipy, pandas as pd
-from spotipy.oauth2 import SpotifyPKCE
+import sys, pandas as pd
 from sklearn import preprocessing as pre
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-import sys
 from itertools import combinations
 
 if not sys.warnoptions:
     import warnings
     warnings.simplefilter("ignore")
 
-scope = 'playlist-modify-public playlist-modify-private'
-red_uri = 'http://localhost:8080'
-client_id = '3d05de7a35df4db0a064b4e40d9c6638'
-sp = spotipy.Spotify(auth_manager=SpotifyPKCE(client_id=client_id, redirect_uri=red_uri, scope=scope))
-user = sp.me()['id']
 features = ['energy', 'tempo', 'danceability', 'valence']
 
 def feature_extraction(ids, feats):
