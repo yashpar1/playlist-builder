@@ -1,5 +1,7 @@
 import sys, pandas as pd
 from sklearn import preprocessing as pre
+from sklearnex import patch_sklearn
+patch_sklearn()
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from itertools import combinations
