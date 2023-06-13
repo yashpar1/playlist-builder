@@ -1,8 +1,8 @@
 import spotipy, pandas as pd
 from spotipy.oauth2 import SpotifyPKCE
-from sklearn import preprocessing as pre
 from sklearnex import patch_sklearn
 patch_sklearn()
+from sklearn import preprocessing as pre
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import sys
