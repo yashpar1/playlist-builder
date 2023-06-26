@@ -1,5 +1,6 @@
-import sys, pandas as pd
-from flask import Flask
+import json, sys, pandas as pd
+from flask import Flask, jsonify, request
+from flask_restful import Resource, Api, reqparse
 from sklearnex import patch_sklearn
 patch_sklearn()
 from sklearn import preprocessing as pre
@@ -7,7 +8,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from itertools import combinations
 
-clusterer = Flask(__name__)
+app = Flask(__name__)
+api = Api(app)
 
 if not sys.warnoptions:
     import warnings
@@ -15,7 +17,7 @@ if not sys.warnoptions:
 
 features = ['energy', 'tempo', 'danceability', 'valence']
 
-@clusterer.route("/clusterer", methods=['GET', 'POST'])
+@app.route("/clustering", methods=['GET', 'POST'])
 def song_clustering(ids, feats):
     """
     Creates Pandas DataFrame of song ids and features, norms features, clusters songs
@@ -54,5 +56,5 @@ def song_clustering(ids, feats):
     df_to_cluster = df_feats[['id', feat_1, feat_2]]
     model = KMeans(n_clusters=num_clusts).fit(df_to_cluster[[feat_1, feat_2]].values)
     clusters = {'cluster': model.labels_}
-    df_clustered = df_to_cluster.join(pd.DataFrame(clusters))
-    return df_clustered
+    df_clustered = df_to_cluster.join(pd.DataFrame(clusters)).drop([feat_1, feat_2])
+    return df_clustered.to_json(orient='records')

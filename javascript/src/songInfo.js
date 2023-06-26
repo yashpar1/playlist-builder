@@ -19,7 +19,7 @@ export async function getFeats(songs) {
     let ids = songs.items.map( (items) => items.track.id );
     let i_max = Math.ceil(ids.length/100);
     let i_init = 0;
-    const feats = {};
+    const feats = [];
   
     while (i_init < i_max) {
       let curr_songs = ids.slice(100 * i_init, 100 * (i_init + 1));
