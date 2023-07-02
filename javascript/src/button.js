@@ -1,5 +1,5 @@
 import { getFeats } from "./songInfo";
-import { accessToken, fetchPlaylists } from "./main";
+import { profile, accessToken, fetchPlaylists } from "./main";
 
 function callPython(feats) {
     $.ajax({
@@ -17,8 +17,8 @@ function groupIds(clusters) {
         group[category].push(cluster);
         return group
     }, {});
-    let groupedIds = groupByClusters.forEach(cluster.map( ({id}) => id ));
-    groupedIds.forEach( (element, index) => { groupedIds[index] = 'spotify:track:' + element});
+    let groupedIds = Object.values(groupByClusters).forEach(val.map( ({id}) => `spotify:track:${id}` ));
+    // groupedIds.forEach(val.map( (element, index) => { groupedIds[index] = `spotify:track:${element}` }) );
 
     return groupedIds;
 }
@@ -28,7 +28,7 @@ export function createPlaylists(groupedIds) {
 }
 
 async function createPlaylist(cluster) {
-    // to-do: get user_id from profile
+    let user_id = profile.id;
     let playlist = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }, body: { "name": "playlist_split"}
     });
