@@ -43,7 +43,7 @@ async function createPlaylist(cluster) {
         await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
             method: "GET", headers: { Authorization: `Bearer ${accessToken}` }, body: { "uris": { uris }}
         });
-        i_init++;
+        iInit++;
       };
 };
 

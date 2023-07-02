@@ -27,7 +27,7 @@ export async function getFeats(songs) {
       method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
     });
     feats.push(newFeats);
-    i_init++;
+    iInit++;
   };
 
   return await { ids, feats };

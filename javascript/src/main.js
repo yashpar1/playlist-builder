@@ -85,10 +85,10 @@ async function fetchPlaylists(token) {
   });
 
   while (playlists.next != null) {
-    let new_playlists = await fetch(playlists.next, {
+    let newPlaylists = await fetch(playlists.next, {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
-    playlists.push(new_playlists);
+    playlists.push(newPlaylists);
   }
 
   return await playlists.json();
