@@ -7,11 +7,11 @@ const code = params.get('code');
 export const accessToken = await getAccessToken(clientId, code);
 
 if (!code) {
-    redirectToAuthCodeFlow(clientId);
+  redirectToAuthCodeFlow(clientId);
 } else {
-    const profile = await fetchProfile(accessToken);
-    const playlists = await fetchPlaylists(accessToken);
-    populateUI(profile, playlists);
+  const profile = await fetchProfile(accessToken);
+  const playlists = await fetchPlaylists(accessToken);
+  populateUI(profile, playlists);
 }
 
 export async function redirectToAuthCodeFlow(clientId) {
@@ -36,7 +36,7 @@ function generateCodeVerifier(length) {
   let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
 }
@@ -45,9 +45,9 @@ async function generateCodeChallenge(codeVerifier) {
   const data = new TextEncoder().encode(codeVerifier);
   const digest = await window.crypto.subtle.digest('SHA-256', data);
   return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
 
 
@@ -62,9 +62,9 @@ export async function getAccessToken(clientId, code) {
   params.append("code_verifier", verifier);
 
   const result = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params
   });
 
   const { access_token } = await result.json();
@@ -73,7 +73,7 @@ export async function getAccessToken(clientId, code) {
 
 async function fetchProfile(token) {
   const result = await fetch("https://api.spotify.com/v1/me", {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
+    method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
   return await result.json();
@@ -81,7 +81,7 @@ async function fetchProfile(token) {
 
 async function fetchPlaylists(token) {
   const playlists = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
+    method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
   while (playlists.next != null) {

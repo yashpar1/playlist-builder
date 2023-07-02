@@ -1,5 +1,5 @@
 import { getFeats } from "./songInfo";
-import { profile, accessToken, fetchPlaylists } from "./main";
+import { accessToken } from "./main";
 
 function callPython(feats) {
     $.ajax({
