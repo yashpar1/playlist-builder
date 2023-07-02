@@ -1,6 +1,6 @@
 import { returnPlaylists } from "./main";
 import { getSongs } from './songInfo';
-import { createButton } from './button.js';
+import { setupButton } from './button.js';
 
 export function showPlaylists(playlists) {
   const plays = returnPlaylists(playlists);

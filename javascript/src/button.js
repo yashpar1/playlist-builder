@@ -28,18 +28,18 @@ export function createPlaylists(groupedIds) {
 }
 
 async function createPlaylist(cluster) {
-    let user_id = profile.id;
-    let playlist = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
+    let userId = profile.id;
+    let playlist = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
         method: "GET", headers: { Authorization: `Bearer ${accessToken}` }, body: { "name": "playlist_split"}
     });
 
     let playlistId = playlist.id;
 
-    let i_init = 0;
-    let i_max = Math.ceil(cluster.length/100);
+    let iInit = 0;
+    let iMax = Math.ceil(cluster.length/100);
 
-    while (i_init < i_max) {
-        let uris = cluster.slice(100 * i_init, 100 * (i_init + 1));
+    while (iInit < iMax) {
+        let uris = cluster.slice(100 * iInit, 100 * (iInit + 1));
         await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
             method: "GET", headers: { Authorization: `Bearer ${accessToken}` }, body: { "uris": { uris }}
         });
@@ -47,6 +47,6 @@ async function createPlaylist(cluster) {
       };
 };
 
-export async function createButton(element) {
+export async function setupButton(element) {
     element.addEventListener('click', createPlaylists(callPython(getFeats(element))))
 }
