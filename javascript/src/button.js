@@ -1,16 +1,16 @@
 import { getFeats } from "./songInfo";
 import { accessToken } from "./main";
 
-function callPython(feats) {
-    $.ajax({
-        type: "POST",
-        url: "/clustering.py",
-        data: { param: feats },
-        success: groupIds
+async function callPython(feats) {
+    let groupedIds = await fetch('/clustering.py', {
+        method: "POST", body: { feats }
     });
+
+    return groupedIds;
 }
 
 function groupIds(clusters) {
+    // to-do: update "reduce" to a function that works on arrays (or have clustering.py return differently formatted json)
     let groupByClusters = clusters.reduce((group, cluster) => {
         let { category } = cluster;
         group[category] = group[category] ?? [];
@@ -18,7 +18,6 @@ function groupIds(clusters) {
         return group
     }, {});
     let groupedIds = Object.values(groupByClusters).forEach(val.map( ({id}) => `spotify:track:${id}` ));
-    // groupedIds.forEach(val.map( (element, index) => { groupedIds[index] = `spotify:track:${element}` }) );
 
     return groupedIds;
 }
@@ -48,5 +47,5 @@ async function createPlaylist(cluster) {
 };
 
 export async function setupButton(element) {
-    element.addEventListener('click', createPlaylists(callPython(getFeats(element))))
+    element.addEventListener('click', createPlaylists(groupIds(callPython(getFeats(element)))));
 }
