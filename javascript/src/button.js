@@ -2,20 +2,22 @@ import { getFeats } from "./songInfo";
 import { accessToken } from "./main";
 
 async function callPython(feats) {
-    let groupedIds = await fetch('/clustering.py', {
-        method: "POST", body: { feats }
+    let groupedIds = $.ajax({
+        type: "POST",
+        url: "~/clustering.py",
+        data: { feats }
     });
 
+    console.log(groupedIds);
     return groupedIds;
 }
 
 function groupIds(clusters) {
-    // to-do: update "reduce" to a function that works on arrays (or have clustering.py return differently formatted json)
-    let groupByClusters = clusters.reduce((group, cluster) => {
+    let groupByClusters = clusters.reduce( (group, cluster) => {
         let { category } = cluster;
         group[category] = group[category] ?? [];
         group[category].push(cluster);
-        return group
+        return group;
     }, {});
     let groupedIds = Object.values(groupByClusters).forEach(val.map( ({id}) => `spotify:track:${id}` ));
 
