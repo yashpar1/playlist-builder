@@ -1,5 +1,5 @@
 import { getFeats } from "./songInfo";
-import { accessToken } from "./main";
+import { token } from "./main";
 
 async function callPython(ids, feats) {
     let groupedIds = $.ajax({
@@ -31,7 +31,7 @@ export function createPlaylists(groupedIds) {
 async function createPlaylist(cluster) {
     let userId = profile.id;
     let playlist = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
-        method: "GET", headers: { Authorization: `Bearer ${ accessToken }` }, body: { "name": "playlist_split"}
+        method: "GET", headers: { Authorization: `Bearer ${ token }` }, body: { "name": "playlist_split"}
     });
 
     let playlistId = playlist.id;
@@ -42,7 +42,7 @@ async function createPlaylist(cluster) {
     while (iInit < iMax) {
         let uris = cluster.slice(100 * iInit, 100 * (iInit + 1));
         await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
-            method: "GET", headers: { Authorization: `Bearer ${accessToken}` }, body: { "uris": { uris }}
+            method: "GET", headers: { Authorization: `Bearer ${token}` }, body: { "uris": { uris }}
         });
         iInit++;
       };

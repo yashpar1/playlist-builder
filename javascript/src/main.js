@@ -4,13 +4,13 @@ const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
 const code = params.get('code');
 
-export const accessToken = await getAccessToken(clientId, code);
+export const token = await getAccessToken(clientId, code);
 
 if (!code) {
   redirectToAuthCodeFlow(clientId);
 } else {
-  const profile = await fetchProfile(accessToken);
-  const playlists = await fetchPlaylists(accessToken);
+  const profile = await fetchProfile(token);
+  const playlists = await fetchPlaylists(token);
   populateUI(profile, playlists);
 }
 

@@ -1,8 +1,8 @@
-import { accessToken } from "./main";
+import { token } from "./main";
 
 export async function getSongs(playlist_id) {
   const playlistInfo = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29&limit=50`, {
-    method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
+    method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
   while (playlistInfo.next != null) {
@@ -24,7 +24,7 @@ export async function getFeats(songs) {
   while (iInit < iMax) {
     let currSongs = ids.slice(100 * iInit, 100 * (iInit + 1));
     let newFeats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${currSongs}`, {
-      method: "GET", headers: { Authorization: `Bearer ${accessToken}` }
+      method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
     feats.push(newFeats);
     iInit++;
