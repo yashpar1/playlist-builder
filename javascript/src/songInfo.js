@@ -1,6 +1,4 @@
-import { token } from "./main";
-
-export async function getSongs(playlist_id) {
+export async function getSongs(playlist_id, token) {
   const playlistInfo = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29&limit=50`, {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
@@ -15,7 +13,7 @@ export async function getSongs(playlist_id) {
   return await playlistInfo.json();
 }
   
-export async function getFeats(songs) {
+export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
   let iMax = Math.ceil(ids.length/100);
   let iInit = 0;

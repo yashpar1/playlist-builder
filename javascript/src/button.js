@@ -1,5 +1,4 @@
 import { getFeats } from "./songInfo";
-import { token } from "./main";
 
 async function callPython(ids, feats) {
     let groupedIds = $.ajax({
@@ -20,7 +19,6 @@ function groupIds(clusters) {
     }, {});
     let groupedIds = Object.values(groupByClusters).forEach(val.map( ({id}) => `spotify:track:${id}` ));
 
-    console.log(groupedIds);
     return groupedIds;
 }
 
@@ -28,10 +26,10 @@ export function createPlaylists(groupedIds) {
     groupedIds.forEach(createPlaylist);
 }
 
-async function createPlaylist(cluster) {
+export async function createPlaylist(cluster, token) {
     let userId = profile.id;
     let playlist = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
-        method: "GET", headers: { Authorization: `Bearer ${ token }` }, body: { "name": "playlist_split"}
+        method: "GET", headers: { Authorization: `Bearer ${token}` }, body: { "name": "playlist_split"}
     });
 
     let playlistId = playlist.id;
@@ -48,6 +46,6 @@ async function createPlaylist(cluster) {
       };
 };
 
-export async function setupButton(element) {
-    element.addEventListener('click', createPlaylists(groupIds(callPython(getFeats(element)))));
+export async function setupButton(element, token) {
+    element.addEventListener('click', createPlaylists(groupIds(callPython(getFeats(element, token)))));
 }

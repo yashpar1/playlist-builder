@@ -1,9 +1,14 @@
-import { returnPlaylists } from "./main";
 import { getSongs } from './songInfo';
 import { setupButton } from './button.js';
 
+function returnPlaylists(playlists) {
+  const names = playlists.items?.map( (items) => items.name);
+  const ids = playlists.items?.map( (items) => items.id);
+  return { names, ids };
+}
+
 export function showPlaylists(playlists) {
-  const plays = returnPlaylists(playlists);
+  let plays = returnPlaylists(playlists);
   let names = plays.names;
   let ids = plays.ids;
 
@@ -18,24 +23,23 @@ export function showPlaylists(playlists) {
     li = document.createElement('li');
   });
 
-  ids?.forEach(async (id) => {
-    const songs = await getSongs(id);
+  ids?.forEach(async ({id}) => {
+    let songs = await getSongs(id, token);
     li.innerHTML += songs.items.map( (items) => items.track.name );
     ul.appendChild(li);
+    // ul.appendChild(setupButton(songs));
     li = document.createElement('li');
   });
 }
 
-export function populateUI(profile, playlists) {
+export function populateUI(profile, playlists, token) {
   document.getElementById("displayName").innerText = profile.display_name;
   if (profile.images[0]) {
     const profileImage = new Image(200, 200);
     profileImage.src = profile.images[0].url;
     document.getElementById("avatar").appendChild(profileImage);
     document.getElementById("imgUrl").innerText = profile.images[0].url;
-  }
-
-  showPlaylists(playlists);
+  };
 
   document.getElementById("id").innerText = profile.id;
   document.getElementById("email").innerText = profile.email;
@@ -44,4 +48,5 @@ export function populateUI(profile, playlists) {
   document.getElementById("url").innerText = profile.href;
   document.getElementById("url").setAttribute("href", profile.href);
   document.getElementById("url").innerText = profile.href;
+  showPlaylists(playlists);
 }

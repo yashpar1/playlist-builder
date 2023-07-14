@@ -1,16 +1,15 @@
 import './../style.css';
 import { populateUI } from './userInterface.js';
-const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
+export const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
 const params = new URLSearchParams(window.location.search);
-const code = params.get('code');
-
-export const token = await getAccessToken(clientId, code);
+export const code = params.get('code');
 
 if (!code) {
   redirectToAuthCodeFlow(clientId);
 } else {
-  const profile = await fetchProfile(token);
-  const playlists = await fetchPlaylists(token);
+  const accessToken = await getAccessToken(clientId, code);
+  const profile = await fetchProfile(accessToken);
+  const playlists = await fetchPlaylists(accessToken);
   populateUI(profile, playlists);
 }
 
@@ -92,10 +91,4 @@ async function fetchPlaylists(token) {
   }
 
   return await playlists.json();
-}
-
-export function returnPlaylists(playlists) {
-  const names = playlists.items?.map( (items) => items.name);
-  const ids = playlists.items?.map( (items) => items.id);
-  return { names, ids };
 }
