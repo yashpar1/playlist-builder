@@ -7,7 +7,7 @@ function returnPlaylists(playlists) {
   return { names, ids };
 }
 
-export function showPlaylists(playlists) {
+export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
   let names = plays.names;
   let ids = plays.ids;
@@ -27,7 +27,7 @@ export function showPlaylists(playlists) {
     let songs = await getSongs(id, token);
     li.innerHTML += songs.items.map( (items) => items.track.name );
     ul.appendChild(li);
-    // ul.appendChild(setupButton(songs));
+    ul.appendChild(setupButton(songs));
     li = document.createElement('li');
   });
 }
@@ -48,5 +48,5 @@ export function populateUI(profile, playlists, token) {
   document.getElementById("url").innerText = profile.href;
   document.getElementById("url").setAttribute("href", profile.href);
   document.getElementById("url").innerText = profile.href;
-  showPlaylists(playlists);
+  showPlaylists(playlists, token);
 }

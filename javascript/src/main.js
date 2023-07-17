@@ -10,7 +10,7 @@ if (!code) {
   const accessToken = await getAccessToken(clientId, code);
   const profile = await fetchProfile(accessToken);
   const playlists = await fetchPlaylists(accessToken);
-  populateUI(profile, playlists);
+  populateUI(profile, playlists, accessToken);
 }
 
 export async function redirectToAuthCodeFlow(clientId) {
