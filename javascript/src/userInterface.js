@@ -23,12 +23,12 @@ export function showPlaylists(playlists, token) {
     li = document.createElement('li');
   });
 
-  ids?.forEach(async ({id}) => {
-    let songs = await getSongs(id, token);
-    li.innerHTML += songs.items.map( (items) => items.track.name );
-    ul.appendChild(li);
-    ul.appendChild(setupButton(songs));
-    li = document.createElement('li');
+  ids?.forEach((playlist) => {
+    getSongs(playlist, token).then(
+      (songs) => {li.innerHTML += songs.items.map( (items) => items.track.name );
+        ul.appendChild(li);
+        // ul.appendChild(setupButton(songs));
+        li = document.createElement('li');});
   });
 }
 
