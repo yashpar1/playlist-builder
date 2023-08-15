@@ -3,14 +3,16 @@ import { getFeats } from "./songInfo";
 async function callPython(ids, feats) {
     let groupedIds = $.ajax({
         type: "POST",
-        url: "./clustering.py",
+        url: "public/clustering.py",
         data: { ids: JSON.stringify(ids), feats: JSON.stringify(feats) }
-    });
+    }).done(function () {return df_clustered});
+    console.log(groupedIds);
 
     return groupedIds;
 }
 
 function groupIds(clusters) {
+    console.log(clusters);
     let groupByClusters = clusters.reduce( (group, cluster) => {
         let { category } = cluster;
         group[category] = group[category] ?? [];
