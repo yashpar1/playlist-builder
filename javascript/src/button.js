@@ -1,14 +1,23 @@
 import { getFeats } from "./songInfo";
+// import express from 'express';
+let url = 'http://localhost:3000/cluster';
 
 async function callPython(ids, feats) {
-    let groupedIds = $.ajax({
-        type: "POST",
-        url: "public/clustering.py",
-        data: { ids: JSON.stringify(ids), feats: JSON.stringify(feats) }
-    }).done(function () {return df_clustered});
-    console.log(groupedIds);
+    const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({'ids': ids, 'feats': feats})
+    });
+    return response.json();
 
-    return groupedIds;
+    // let groupedIds = $.ajax({
+    //     type: "POST",
+    //     url: "http://localhost:3000/cluster",
+    //     // url: "public/clustering.py",
+    //     data: { ids: JSON.stringify(ids), feats: JSON.stringify(feats) }
+    // });
+    // console.log(groupedIds);
+
+    // return groupedIds;
 }
 
 function groupIds(clusters) {
@@ -49,5 +58,5 @@ export async function createPlaylist(cluster, token) {
 };
 
 export async function setupButton(element, token) {
-    element.addEventListener('click', createPlaylists(groupIds(callPython(getFeats(element, token)))));
-}
+    element.addEventListener('click', createPlaylists(callPython(groupIds(getFeats(element, token)))))
+};
