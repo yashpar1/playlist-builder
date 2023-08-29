@@ -15,7 +15,7 @@ if not sys.warnoptions:
     import warnings
     warnings.simplefilter("ignore")
 
-@app.route("/cluster", methods=['POST', 'GET'])
+@app.route("/cluster", methods=['GET'])
 def song_clustering(ids, feats):
     """
     Creates Pandas DataFrame of song ids and features, norms features, clusters songs
