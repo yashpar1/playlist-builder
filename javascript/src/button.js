@@ -1,10 +1,10 @@
 import { getFeats } from "./songInfo";
-let url = new URL('http://172.27.22.32:3000/cluster/');
+let url = new URL('http://172.27.22.32:3000/cluster');
 
 async function callPython(ids, feats) {
     url.search = new URLSearchParams({
-        ids:ids,
-        feats:feats
+        ids:JSON.stringify(ids),
+        feats:JSON.stringify(feats)
     })
     
     const response = await fetch(url, {
