@@ -16,10 +16,12 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
 @app.route("/cluster", methods=['GET'])
-def song_clustering(ids, feats):
+def song_clustering():
     """
     Creates Pandas DataFrame of song ids and features, norms features, clusters songs
     """
+    ids = request.args.get('ids')
+    feats = request.args.get('feats')
     features = ['energy', 'tempo', 'danceability', 'valence']
     df_feats = pd.DataFrame(ids).join(pd.DataFrame(feats)[[features]])
     to_norm = df_feats[features].values
