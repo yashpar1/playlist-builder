@@ -16,16 +16,16 @@ export async function getSongs(playlist_id, token) {
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
   let iMax = Math.ceil(ids.length/100);
-  let iInit = 0;
+  let i = 0;
   const feats = [];
 
-  while (iInit < iMax) {
-    let currSongs = ids.slice(100 * iInit, 100 * (iInit + 1));
+  while (i < iMax) {
+    let currSongs = ids.slice(100 * i, 100 * (i + 1));
     let newFeats = await fetch(`https://api.spotify.com/v1/audio-features?ids=${currSongs}`, {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
     feats.push(newFeats);
-    iInit++;
+    i++;
   };
 
   return await { ids, feats };
