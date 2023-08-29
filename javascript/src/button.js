@@ -1,26 +1,19 @@
 import { getFeats } from "./songInfo";
-// import express from 'express';
-let url = 'http://localhost:3000/cluster';
+let url = new URL('http://172.27.22.32:3000/cluster/');
 
 async function callPython(ids, feats) {
+    url.search = new URLSearchParams({
+        ids:ids,
+        feats:feats
+    })
+    
     const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({'ids': ids, 'feats': feats})
+        method: "GET"
     });
     return response.json();
-
-    // let groupedIds = $.ajax({
-    //     type: "POST",
-    //     url: "http://localhost:3000/cluster",
-    //     // url: "public/clustering.py",
-    //     data: { ids: JSON.stringify(ids), feats: JSON.stringify(feats) }
-    // });
-    // console.log(groupedIds);
-
-    // return groupedIds;
 }
 
-function groupIds(clusters) {
+export function groupIds(clusters) {
     console.log(clusters);
     let groupByClusters = clusters.reduce( (group, cluster) => {
         let { category } = cluster;
@@ -58,5 +51,5 @@ export async function createPlaylist(cluster, token) {
 };
 
 export async function setupButton(element, token) {
-    element.addEventListener('click', createPlaylists(callPython(groupIds(getFeats(element, token)))))
+    element.addEventListener('click', createPlaylists(groupIds(callPython(getFeats(element, token)))))
 };
