@@ -7,17 +7,19 @@ function returnPlaylists(playlists) {
   return { names, ids };
 };
 
-function returnSongs(songs) {
-  const names = songs.items?.map( (items) => items.name);
-  const ids = songs.items?.map( (items) => items.id);
-  const artists = songs.items?.map( (items) => items.artists?.map( (artists) => artists.name));
-  return { names, ids, artists };
+function returnSongs(tracks) {
+  const songs = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.name));
+  const ids = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.id));
+  const artists = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.artists?.map( (artists) => artists.name)));
+  return { songs, ids, artists };
 };
 
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
-  let songs = Promise.all(plays.ids?.map( (playlist) => getSongs(playlist, token) ));
-  console.log(songs);
+  let tracks = Promise.all(plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(returnSongs);
+  let songs = tracks.then( (tracks) => {return tracks.songs} );
+  let ids = tracks.then( (tracks) => {return tracks.ids} );
+  let artists = tracks.then( (tracks) => {return tracks.artists} );
 
   let ul = document.createElement('ul');
   let li = document.createElement('li');
@@ -30,6 +32,7 @@ export function showPlaylists(playlists, token) {
     li = document.createElement('li');
   });
 
+// to-do: render songs and buttons using forEach
   // songs.forEach((songs) => {console.log(songs)});
 
 //     .then(
