@@ -11,7 +11,7 @@ export async function getSongs(playlist_id, token) {
   }
 
   return await playlistInfo.json();
-}
+};
   
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
@@ -29,4 +29,4 @@ export async function getFeats(songs, token) {
   };
 
   return await { ids, feats };
-}
+};

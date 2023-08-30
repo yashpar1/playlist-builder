@@ -11,7 +11,7 @@ if (!code) {
   const profile = await fetchProfile(accessToken);
   const playlists = await fetchPlaylists(accessToken);
   populateUI(profile, playlists, accessToken);
-}
+};
 
 export async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);
@@ -28,7 +28,7 @@ export async function redirectToAuthCodeFlow(clientId) {
   params.append("code_challenge", challenge);
 
   document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
-}
+};
 
 function generateCodeVerifier(length) {
   let text = '';
@@ -38,7 +38,7 @@ function generateCodeVerifier(length) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
-}
+};
 
 async function generateCodeChallenge(codeVerifier) {
   const data = new TextEncoder().encode(codeVerifier);
@@ -47,7 +47,7 @@ async function generateCodeChallenge(codeVerifier) {
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
-}
+};
 
 
 export async function getAccessToken(clientId, code) {
@@ -68,7 +68,7 @@ export async function getAccessToken(clientId, code) {
 
   const { access_token } = await result.json();
   return access_token;
-}
+};
 
 async function fetchProfile(token) {
   const result = await fetch("https://api.spotify.com/v1/me", {
@@ -76,7 +76,7 @@ async function fetchProfile(token) {
   });
 
   return await result.json();
-}
+};
 
 async function fetchPlaylists(token) {
   const playlists = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
@@ -91,4 +91,4 @@ async function fetchPlaylists(token) {
   }
 
   return await playlists.json();
-}
+};
