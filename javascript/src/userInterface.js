@@ -1,4 +1,4 @@
-import { getSongs } from './songInfo';
+import { getSongs, getMoreSongs } from './songInfo';
 import { setupButton } from './button.js';
 
 function returnPlaylists(playlists) {
@@ -16,8 +16,12 @@ function returnSongs(tracks) {
 
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
-  let tracks = Promise.all(plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(returnSongs);
+  console.log(plays.names.length);
+  let tracks = Promise.all( plays.ids?.map( (playlist) => getMoreSongs(playlist, token) )).then(returnSongs);
+  // .then(returnSongs)
+  console.log(tracks);
   let songs = tracks.then( (tracks) => {return tracks.songs} );
+  console.log(songs);
   let ids = tracks.then( (tracks) => {return tracks.ids} );
   let artists = tracks.then( (tracks) => {return tracks.artists} );
 
@@ -32,8 +36,17 @@ export function showPlaylists(playlists, token) {
     li = document.createElement('li');
   });
 
+  // tracks.forEach((tracks) => {
+  //   li.innerHTML += tracks;
+  //   ul.appendChild(li);
+  //   li = document.createElement('li');
+  // });
+
+  // songs?.forEach((playlist) => {
+
+  // });
+
 // to-do: render songs and buttons using forEach
-  // songs.forEach((songs) => {console.log(songs)});
 
 //     .then(
 //       (songs) => {li.innerHTML += songs.items.map( (items) => items.track.name );

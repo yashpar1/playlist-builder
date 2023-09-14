@@ -1,16 +1,31 @@
-export async function getSongs(playlist_id, token) {
-  const playlistInfo = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?fields=next%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29&limit=50`, {
+export async function getSongs(playlistId, token) {
+  const playlistInfo = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`, {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
-  while (playlistInfo.next != null) {
-    let newPlaylistInfo = await fetch(playlistInfo.next, {
+  return await playlistInfo.json();
+};
+
+// to-do: get the while loop iterating over next (which shows up, but as a promise so we need to figure out .then chaining)
+export async function getMoreSongs(playlistId, token) {
+  let playlistInfo = getSongs(playlistId, token);
+  const total = playlistInfo.then((playlistInfo) => playlistInfo.total);
+  const next = playlistInfo.then((playlistInfo) => playlistInfo.next);
+  console.log(total);
+  console.log(next);
+  let iMax = Math.floor(total/100);
+  let i = 0;
+  let newSongs = [];
+  while (i < iMax) {
+    let newPlaylistInfo = await fetch(encodeURI(next), {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
-    playlistInfo.push(newPlaylistInfo);
+    newSongs = newSongs.assign({}, newPlaylistInfo);
+    i++;
   }
+  console.log(newSongs);
 
-  return await playlistInfo.json();
+  return await Object.assign({}, playlistInfo, newSongs);
 };
   
 export async function getFeats(songs, token) {
