@@ -7,21 +7,15 @@ export async function getSongs(playlistId, token) {
 };
 
 // to-do: get the while loop iterating over next (which shows up, but as a promise so we need to figure out .then chaining)
-export async function getMoreSongs(playlistId, token) {
-  let playlistInfo = getSongs(playlistId, token);
-  const total = playlistInfo.then((playlistInfo) => playlistInfo.total);
-  const next = playlistInfo.then((playlistInfo) => playlistInfo.next);
-  console.log(total);
+export async function getMoreSongs(playlistInfo, token) {
+  let next = playlistInfo.map( (playlistInfo) => playlistInfo.next);
   console.log(next);
-  let iMax = Math.floor(total/100);
-  let i = 0;
   let newSongs = [];
-  while (i < iMax) {
+  while (next != null) {
     let newPlaylistInfo = await fetch(encodeURI(next), {
       method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
-    newSongs = newSongs.assign({}, newPlaylistInfo);
-    i++;
+    newSongs.push(newPlaylistInfo);
   }
   console.log(newSongs);
 

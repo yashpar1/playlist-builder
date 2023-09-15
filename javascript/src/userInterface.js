@@ -17,7 +17,7 @@ function returnSongs(tracks) {
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
   console.log(plays.names.length);
-  let tracks = Promise.all( plays.ids?.map( (playlist) => getMoreSongs(playlist, token) )).then(returnSongs);
+  let tracks = Promise.all( plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(getMoreSongs).then(returnSongs);
   // .then(returnSongs)
   console.log(tracks);
   let songs = tracks.then( (tracks) => {return tracks.songs} );
