@@ -6,20 +6,33 @@ export async function getSongs(playlistId, token) {
   return await playlistInfo.json();
 };
 
-// to-do: get the while loop iterating over next (which shows up, but as a promise so we need to figure out .then chaining)
+function fixUris(uri) {
+  return uri.substring(0, uri.indexOf('&locale')).replaceAll('(', '%28').replaceAll(')', '%29').replaceAll(',','%2C')
+};
+
+// to-do: change into map that acts on individual playlists
 export async function getMoreSongs(playlistInfo, token) {
   let next = playlistInfo.map( (playlistInfo) => playlistInfo.next);
   console.log(next);
   let newSongs = [];
-  while (next != null) {
-    let newPlaylistInfo = await fetch(encodeURI(next), {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
-    });
-    newSongs.push(newPlaylistInfo);
-  }
-  console.log(newSongs);
+  for (let playlist in next) {
+    let nextUri = next[playlist];
+    if (nextUri != null) {
+      let uri = fixUris(nextUri);
+      let newPlaylistInfo = await fetch(uri, {
+        method: "GET", headers: { Authorization: `Bearer ${token}` }
+      });
+      newSongs.push(newPlaylistInfo);
+      // nextUri = fixUris(newPlaylistInfo.map( (playlistInfo) => playlistInfo.next))
+    } else {
+      newSongs.push(null);
+    }
+  };
 
-  return await Object.assign({}, playlistInfo, newSongs);
+  let toAdd = Promise.all(newSongs);
+  console.log(toAdd);
+
+  return await playlistInfo;
 };
   
 export async function getFeats(songs, token) {
