@@ -4,19 +4,21 @@ function fixUris(uri) {
   return fixed;
 };
 
-// to-do: update so that this handles when we're outta items and when next is null; that'd be fine if we were just
-// logging to console but we needa pass things so
-async function* getSongs(uri, token) {                                                                                      
+async function* getSongs(uri, token) {
   while (true) {
     yield await fetch(uri, {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
       if (info.items && info.items.length > 0) {
-        uri = fixUris(info.next);
+        if (info.next != null) {
+          uri = fixUris(info.next);
+        } else {
+          // figure out what to put here, currently it keeps looping over the last page and Spotify got mad
+        }
         return info;
       } else {
         return null;
       }
-    });                                                                                                                                                
-  }                                                                                                                                         
+    });
+  }
 };
 
 export function compileSongs(playlistId, token, opts) {                                                                                                                                     
@@ -32,12 +34,12 @@ export function compileSongs(playlistId, token, opts) {
   let { logs, info, onComplete } = opts;
   let next = logs.next();
 
-  next.value.then(data => {
+  next.then(data => {
     if (data) {
       info = info.concat(data.items);
-      console.log(info);
       compileSongs(playlistId, token, {logs, info, onComplete});
     } else {
+      console.log(info);
       onComplete(info);
     };
   });
