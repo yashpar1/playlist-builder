@@ -1,39 +1,47 @@
-export async function getSongs(playlistId, token) {
-  const playlistInfo = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`, {
-    method: "GET", headers: { Authorization: `Bearer ${token}` }
-  });
-
-  return await playlistInfo.json();
-};
-
 function fixUris(uri) {
-  return uri.substring(0, uri.indexOf('&locale')).replaceAll('(', '%28').replaceAll(')', '%29').replaceAll(',','%2C')
+  let fixed = uri.substring(0, uri.indexOf('&locale')).replaceAll('(', '%28').replaceAll(')', '%29').replaceAll(',','%2C');
+  console.log(fixed);
+  return fixed;
 };
 
-// to-do: change into map that acts on individual playlists
-export async function getMoreSongs(playlistInfo, token) {
-  let next = playlistInfo.map( (playlistInfo) => playlistInfo.next);
-  console.log(next);
-  let newSongs = [];
-  for (let playlist in next) {
-    let nextUri = next[playlist];
-    if (nextUri != null) {
-      let uri = fixUris(nextUri);
-      let newPlaylistInfo = await fetch(uri, {
-        method: "GET", headers: { Authorization: `Bearer ${token}` }
-      });
-      newSongs.push(newPlaylistInfo);
-      // nextUri = fixUris(newPlaylistInfo.map( (playlistInfo) => playlistInfo.next))
-    } else {
-      newSongs.push(null);
-    }
+// to-do: update so that this handles when we're outta items and when next is null; that'd be fine if we were just
+// logging to console but we needa pass things so
+async function* getSongs(uri, token) {                                                                                      
+  while (true) {
+    yield await fetch(uri, {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
+      if (info.items && info.items.length > 0) {
+        uri = fixUris(info.next);
+        return info;
+      } else {
+        return null;
+      }
+    });                                                                                                                                                
+  }                                                                                                                                         
+};
+
+export function compileSongs(playlistId, token, opts) {                                                                                                                                     
+  let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
+  if (!opts.hasOwnProperty('info')) {
+    opts.info = [];
   };
 
-  let toAdd = Promise.all(newSongs);
-  console.log(toAdd);
+  if (!opts.hasOwnProperty('logs')) {
+    opts.logs = getSongs(initialUri, token);
+  };
 
-  return await playlistInfo;
-};
+  let { logs, info, onComplete } = opts;
+  let next = logs.next();
+
+  next.value.then(data => {
+    if (data) {
+      info = info.concat(data.items);
+      console.log(info);
+      compileSongs(playlistId, token, {logs, info, onComplete});
+    } else {
+      onComplete(info);
+    };
+  });
+}  
   
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );

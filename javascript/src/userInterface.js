@@ -1,4 +1,4 @@
-import { getSongs, getMoreSongs } from './songInfo';
+import { compileSongs } from './songInfo';
 import { setupButton } from './button.js';
 
 function returnPlaylists(playlists) {
@@ -16,9 +16,10 @@ function returnSongs(tracks) {
 
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
-  console.log(plays.names.length);
-  let tracks = Promise.all( plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(getMoreSongs).then(returnSongs);
-  // .then(returnSongs)
+  console.log(plays);
+  // let tracks = Promise.all( plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(returnSongs);
+  // .then(data => {getMoreSongs(data, token)})
+  let tracks = Promise.all( plays.ids?.map( (playlist) => compileSongs(playlist, token, {onComplete: info => { return info; }}))).then(returnSongs);
   console.log(tracks);
   let songs = tracks.then( (tracks) => {return tracks.songs} );
   console.log(songs);
