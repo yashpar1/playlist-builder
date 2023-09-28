@@ -5,15 +5,18 @@ function fixUris(uri) {
 
 async function* getSongs(uri, token) {
   while (uri != null) {
-      yield await fetch(fixUris(uri), {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
-        uri = info.next;
-        return info;
-      });
+    console.log(uri);
+    yield await fetch(uri, {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then(resp => resp.json()).then(info => {
+      uri = info.next;
+      console.log(uri);
+      console.log(info);
+      return info;
+    });
   }
 };
 
-export function compileSongs(playlistIds, token, opts) {    
-  for (let playlistId in playlistIds) {                                                                                                                                 
+export function compileSongs(playlistIds, token, opts) {
+  for (let playlistId of playlistIds) {
     let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
     if (!opts.hasOwnProperty('info')) {
       opts.info = [];
@@ -24,18 +27,20 @@ export function compileSongs(playlistIds, token, opts) {
     };
 
     let { logs, info, onComplete } = opts;
-    let next = logs.next();
+    let next = logs.next().value;
+    console.log(next);
+    console.log(logs);
 
-    next.then(data => {
-      if (data) {
+    if (next != undefined) { // issue now is that we aren't appending any info after the first call fucking bless
+      next.then(data => {
         info = info.concat(data.items);
         compileSongs(playlistId, token, {logs, info, onComplete});
-      } else {
-        onComplete(info);
-      };
-    });
-  }
-}  
+      });
+    } else {
+      onComplete(info);
+    }
+  };
+}; 
   
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
