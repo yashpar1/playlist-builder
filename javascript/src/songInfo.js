@@ -1,23 +1,18 @@
 function fixUris(uri) {
   let fixed = uri.substring(0, uri.indexOf('&locale')).replaceAll('(', '%28').replaceAll(')', '%29').replaceAll(',','%2C');
-  console.log(fixed);
   return fixed;
 };
 
 async function* getSongs(uri, token) {
   while (true) {
-    yield await fetch(uri, {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
-      if (info.items && info.items.length > 0) {
-        if (info.next != null) {
-          uri = fixUris(info.next);
-        } else {
-          // figure out what to put here, currently it keeps looping over the last page and Spotify got mad
-        }
+    if (uri != null) {
+      yield await fetch(fixUris(uri), {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
+        uri = info.next;
         return info;
-      } else {
-        return null;
-      }
-    });
+      });
+    } else {
+      yield null;
+    }
   }
 };
 
@@ -39,7 +34,6 @@ export function compileSongs(playlistId, token, opts) {
       info = info.concat(data.items);
       compileSongs(playlistId, token, {logs, info, onComplete});
     } else {
-      console.log(info);
       onComplete(info);
     };
   });
