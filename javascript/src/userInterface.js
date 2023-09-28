@@ -19,7 +19,9 @@ export function showPlaylists(playlists, token) {
   console.log(plays);
   // let tracks = Promise.all( plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(returnSongs);
   // .then(data => {getMoreSongs(data, token)})
-  let tracks = Promise.all( plays.ids?.map( (playlist) => compileSongs(playlist, token, {onComplete: info => { return info; }}))).then(returnSongs);
+  let tracks = Promise.all(compileSongs(plays.ids, token, {onComplete: info => { return info.json(); }})).then(returnSongs);
+  // let tracks = Promise.all( plays.ids?.map( (playlist) => compileSongs(playlist, token, {onComplete: info => { return info.json(); }}))).then(returnSongs);
+  // need to replace plays.ids?.map with a function call
   console.log(tracks);
   let songs = tracks.then( (tracks) => {return tracks.songs} );
   console.log(songs);

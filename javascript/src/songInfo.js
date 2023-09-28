@@ -4,39 +4,37 @@ function fixUris(uri) {
 };
 
 async function* getSongs(uri, token) {
-  while (true) {
-    if (uri != null) {
+  while (uri != null) {
       yield await fetch(fixUris(uri), {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then((resp) => resp.json()).then((info) => {
         uri = info.next;
         return info;
       });
-    } else {
-      yield null;
-    }
   }
 };
 
-export function compileSongs(playlistId, token, opts) {                                                                                                                                     
-  let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
-  if (!opts.hasOwnProperty('info')) {
-    opts.info = [];
-  };
-
-  if (!opts.hasOwnProperty('logs')) {
-    opts.logs = getSongs(initialUri, token);
-  };
-
-  let { logs, info, onComplete } = opts;
-  let next = logs.next();
-
-  next.then(data => {
-    if (data) {
-      info = info.concat(data.items);
-      compileSongs(playlistId, token, {logs, info, onComplete});
-    } else {
-      onComplete(info);
+export function compileSongs(playlistIds, token, opts) {    
+  for (let playlistId in playlistIds) {                                                                                                                                 
+    let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
+    if (!opts.hasOwnProperty('info')) {
+      opts.info = [];
     };
-  });
+
+    if (!opts.hasOwnProperty('logs')) {
+      opts.logs = getSongs(initialUri, token);
+    };
+
+    let { logs, info, onComplete } = opts;
+    let next = logs.next();
+
+    next.then(data => {
+      if (data) {
+        info = info.concat(data.items);
+        compileSongs(playlistId, token, {logs, info, onComplete});
+      } else {
+        onComplete(info);
+      };
+    });
+  }
 }  
   
 export async function getFeats(songs, token) {
