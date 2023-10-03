@@ -12,17 +12,11 @@ function* getSongs(uri, token) {
   }
 };
 
-// this needs to be run as a forEach
 export function compileSongs(playlistId, token, opts) {
   let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
   
-  if (!opts.hasOwnProperty('info')) {
-    opts.info = [];
-  };
-
-  if (!opts.hasOwnProperty('logs')) {
-    opts.logs = getSongs(initialUri, token);
-  };
+  if (!opts.hasOwnProperty('info')) { opts.info = []; };
+  if (!opts.hasOwnProperty('logs')) { opts.logs = getSongs(initialUri, token); };
 
   let { logs, info, onComplete } = opts;
   let next = logs.next().value;
@@ -35,7 +29,7 @@ export function compileSongs(playlistId, token, opts) {
   } else {
     onComplete(info);
   }
-}; 
+};
   
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
