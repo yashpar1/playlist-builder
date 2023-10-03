@@ -7,26 +7,28 @@ function returnPlaylists(playlists) {
   return { names, ids };
 };
 
-function returnSongs(tracks) {
-  const songs = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.name));
-  const ids = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.id));
-  const artists = tracks?.map( (tracks) => tracks.items?.map( (items) => items.track.artists?.map( (artists) => artists.name)));
-  return { songs, ids, artists };
+// to-do: update so tracks can output songs/ids/artists
+function returnSongs(tracks, onComplete) {
+  const songs = tracks.map( (tracks) => tracks.name);
+  const ids = tracks.map( (tracks) => tracks.id);
+  const artists = tracks?.map( (tracks) => tracks.artists?.map( (artists) => artists.name));
+  let result = { songs, ids, artists };
+  onComplete(result);
 };
 
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
-  console.log(plays.ids);
-  // let tracks = Promise.all( plays.ids?.map( (playlist) => getSongs(playlist, token) )).then(returnSongs);
-  // .then(data => {getMoreSongs(data, token)})
-  let tracks = compileSongs(plays.ids.values(), token, {onComplete: (info) => { return info; }} )
-  // .then(returnSongs);
-  // let tracks = Promise.all(compileSongs(plays.ids, token, {onComplete: info => { return info.json(); }})).then(returnSongs);
+  console.log(plays);
+  let tracks = [];
+  plays.ids.forEach(playId => compileSongs(playId, token, {onComplete: (info) => { tracks.push(info) }}));
   console.log(tracks);
-  let songs = tracks.then( (tracks) => {return tracks.songs} );
-  console.log(songs);
-  let ids = tracks.then( (tracks) => {return tracks.ids} );
-  let artists = tracks.then( (tracks) => {return tracks.artists} );
+  let sorted = [];
+  tracks.forEach(songs => returnSongs(songs, {onComplete: (result) => { sorted.push(result) }}));
+  console.log(sorted);
+
+  // let songs = tracks.then( (tracks) => {return tracks.songs} );
+  // let ids = tracks.then( (tracks) => {return tracks.ids} );
+  // let artists = tracks.then( (tracks) => {return tracks.artists} );
 
   let ul = document.createElement('ul');
   let li = document.createElement('li');

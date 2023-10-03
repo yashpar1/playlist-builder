@@ -23,7 +23,7 @@ export function compileSongs(playlistId, token, opts) {
 
   if (next != undefined) {
     next.then(data => {
-      info = info.concat(data);
+      info = info.concat(data.items);
       compileSongs(playlistId, token, {logs, info, onComplete});
     });
   } else {
