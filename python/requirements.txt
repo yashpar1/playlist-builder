@@ -2,3 +2,4 @@ spotipy
 pandas
 scikit-learn
 seaborn
+sklearnex
