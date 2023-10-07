@@ -3,6 +3,11 @@ function fixUris(uri) {
   return fixed;
 };
 
+/**
+ * 
+ * @param {string} uri 
+ * @param {string} token 
+ */
 function* getSongs(uri, token) {
   while (uri != null) {
     yield fetch(uri, {method: "GET", headers: {Authorization: `Bearer ${token}`}}).then(resp => resp.json()).then(info => {
@@ -12,25 +17,45 @@ function* getSongs(uri, token) {
   }
 };
 
-export function compileSongs(playlistId, token, opts) {
-  let initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
-  
-  if (!opts.hasOwnProperty('info')) { opts.info = []; };
-  if (!opts.hasOwnProperty('logs')) { opts.logs = getSongs(initialUri, token); };
+/**
+ * 
+ * @param {string} playlistId 
+ * @param {string} token 
+ * @returns {Promise<object[]>}
+ */
+export async function compileSongs(playlistId, token) {
+  const initialUri = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=total%2Cnext%2Citems%28track%28name%2Cid%2Cartists%28name%29%29%29`;
+  const chunks = getSongs(initialUri, token);
+  let songs = [];
+  let next = chunks.next().value;
 
-  let { logs, info, onComplete } = opts;
-  let next = logs.next().value;
+  while (next != undefined) {
+    const data = await next;
+    songs = songs.concat(data.items);
+    next = chunks.next().value;
+    };
 
-  if (next != undefined) {
-    next.then(data => {
-      info = info.concat(data.items);
-      compileSongs(playlistId, token, {logs, info, onComplete});
-    });
-  } else {
-    onComplete(info);
-  }
+  return songs;
 };
-  
+
+/**
+ * 
+ * @param {string[]} playIds 
+ * @param {string} token 
+ * @returns {Promise<Promise<object>[]>}
+ */
+export async function returnCompiledSongs(playIds, token) {
+  let tracks = [];
+  playIds.forEach(playId => tracks.push(compileSongs(playId, token)));
+  return tracks;
+};
+
+/**
+ * 
+ * @param {string[]} songs 
+ * @param {string} token 
+ * @returns {Object}
+ */
 export async function getFeats(songs, token) {
   let ids = songs.items.map( (items) => items.track.id );
   let iMax = Math.ceil(ids.length/100);
