@@ -1,6 +1,6 @@
-import json, sys, pandas as pd
-from flask import Flask, jsonify, request
-from flask_restful import Resource, Api, reqparse
+import sys, pandas as pd
+from flask import Flask, request
+from flask_restful import Api
 from sklearnex import patch_sklearn
 patch_sklearn()
 from sklearn import preprocessing as pre
