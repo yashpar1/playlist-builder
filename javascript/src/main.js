@@ -1,17 +1,5 @@
 import './../style.css';
-import { populateUI } from './userInterface.js';
-export const clientId = '3d05de7a35df4db0a064b4e40d9c6638';
-const params = new URLSearchParams(window.location.search);
-export const code = params.get('code');
-
-if (!code) {
-  redirectToAuthCodeFlow(clientId);
-} else {
-  const accessToken = await getAccessToken(clientId, code);
-  const profile = await fetchProfile(accessToken);
-  const playlists = await fetchPlaylists(accessToken);
-  populateUI(profile, playlists, accessToken);
-};
+import { useEffect, useState } from 'preact/hooks';
 
 export async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);
@@ -70,7 +58,7 @@ export async function getAccessToken(clientId, code) {
   return access_token;
 };
 
-async function fetchProfile(token) {
+export async function fetchProfile(token) {
   const result = await fetch("https://api.spotify.com/v1/me", {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
@@ -79,10 +67,53 @@ async function fetchProfile(token) {
 };
 
 // probably need to update this with the generator function thing
-async function fetchPlaylists(token) {
+export async function fetchPlaylists(token) {
   const playlists = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
 
   return await playlists.json();
 };
+
+export function useAccessToken(clientId, code) {
+    const [accessToken, setAccessToken] = useState();
+    
+    useEffect(() => {
+	if (clientId && code) {
+	    getAccessToken(clientId, code).then(accessToken => {
+		setAccessToken(accessToken);
+	    });
+	}
+	
+    }, [clientId, code]);
+
+    return accessToken;
+}
+
+export function useProfile(accessToken) {
+    const [profile, setProfile] = useState();
+
+    useEffect(() => {
+	if (accessToken) {
+	    fetchProfile(accessToken).then(profile => {
+		setProfile(profile);
+	    });
+	}
+    }, [accessToken]);
+
+    return profile;
+}
+
+export function usePlaylists(accessToken) {
+    const [playlists, setPlaylists] = useState();
+    
+    useEffect(() => {
+	if (accessToken) {
+	    fetchPlaylists(accessToken).then(playlists => {
+		setPlaylists(playlists);
+	    });
+	}
+    }, [accessToken]);
+    
+    return playlists;
+}
