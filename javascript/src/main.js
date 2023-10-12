@@ -78,17 +78,11 @@ async function fetchProfile(token) {
   return await result.json();
 };
 
+// probably need to update this with the generator function thing
 async function fetchPlaylists(token) {
   const playlists = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
     method: "GET", headers: { Authorization: `Bearer ${token}` }
   });
-
-  while (playlists.next != null) {
-    let newPlaylists = await fetch(playlists.next, {
-      method: "GET", headers: { Authorization: `Bearer ${token}` }
-    });
-    playlists.push(newPlaylists);
-  }
 
   return await playlists.json();
 };

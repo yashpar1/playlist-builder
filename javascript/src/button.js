@@ -11,7 +11,7 @@ async function callPython(ids, feats) {
         method: "GET"
     });
     return response.json();
-}
+};
 
 export function groupIds(clusters) {
     console.log(clusters);
@@ -24,12 +24,14 @@ export function groupIds(clusters) {
     let groupedIds = Object.values(groupByClusters).forEach(val.map( ({id}) => `spotify:track:${id}` ));
 
     return groupedIds;
-}
+};
 
 export function createPlaylists(groupedIds) {
     groupedIds.forEach(createPlaylist);
-}
+};
 
+// this might need to be split into a function that gets playlist ID and then a function that adds songs (can probably be same loop)
+// will be easier to tell once we get the initial looped api call set up
 export async function createPlaylist(cluster, token) {
     let userId = profile.id;
     let playlist = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {

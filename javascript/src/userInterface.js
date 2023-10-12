@@ -1,4 +1,4 @@
-import { compileSongs } from './songInfo';
+import { returnCompiledSongs } from './songInfo';
 import { setupButton } from './button.js';
 
 function returnPlaylists(playlists) {
@@ -8,27 +8,26 @@ function returnPlaylists(playlists) {
 };
 
 // to-do: update so tracks can output songs/ids/artists
-function returnSongs(tracks, onComplete) {
-  const songs = tracks.map( (tracks) => tracks.name);
-  const ids = tracks.map( (tracks) => tracks.id);
-  const artists = tracks?.map( (tracks) => tracks.artists?.map( (artists) => artists.name));
+function returnSongs(tracks, opts) {
+  let songs = tracks.map( (tracks) => tracks.track.name)
+  let ids = tracks.map( (tracks) => tracks.id);
+  let artists = tracks?.map( (tracks) => tracks.artists?.map( (artists) => artists.name));
   let result = { songs, ids, artists };
+  let {onComplete} = opts;
   onComplete(result);
 };
 
 export function showPlaylists(playlists, token) {
   let plays = returnPlaylists(playlists);
   console.log(plays);
-  let tracks = [];
-  plays.ids.forEach(playId => compileSongs(playId, token, {onComplete: (info) => { tracks.push(info) }}));
+  let tracks = returnCompiledSongs(plays.ids, token);
   console.log(tracks);
   let sorted = [];
-  tracks.forEach(songs => returnSongs(songs, {onComplete: (result) => { sorted.push(result) }}));
-  console.log(sorted);
-
-  // let songs = tracks.then( (tracks) => {return tracks.songs} );
-  // let ids = tracks.then( (tracks) => {return tracks.ids} );
-  // let artists = tracks.then( (tracks) => {return tracks.artists} );
+  // the issue now is that tracks is getting things pushed to it asynchronously, so I can't access things in it
+  // i.e. liked songs being 6555 songs to get through before it's done returning things
+  // solution might be to wrap the expected return in a Promise, and then continue on with the ".then" stuff
+  // tracks.forEach(tracks => returnSongs(tracks, {onComplete: (info) => { sorted.push(info) }}));
+  // console.log(sorted);
 
   let ul = document.createElement('ul');
   let li = document.createElement('li');

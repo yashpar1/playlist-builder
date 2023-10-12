@@ -6,7 +6,8 @@ function fixUris(uri) {
 /**
  * 
  * @param {string} uri 
- * @param {string} token 
+ * @param {string} token
+ * @returns {Promise<object[]>} 
  */
 function* getSongs(uri, token) {
   while (uri != null) {
